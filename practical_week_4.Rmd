@@ -1,0 +1,15 @@
+---
+title: "In-Class Practical Example Week 4"
+date: "2025-10-21"
+output: html_document
+---
+
+
+```{r message = FALSE}
+library(terra)
+temps <- terra::rast("data/wc2.1_2.5m_tmax_ACCESS-CM2_ssp126_2081-2100.tif")
+# have a look at the raster layer jan
+plot(temps)
+```
+
+
