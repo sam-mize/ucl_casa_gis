@@ -52,7 +52,14 @@ Maybe it would be more interesting to look at decline in gender inequality relat
 data_of_interest <- data_of_interest %>%
   mutate(.,Proportion_of_2010_GII_Reduced_By_2019 = 1- (joined[['gii_2019']] / joined[['gii_2010']]))
 
-#tmap_mode("plot")
 data_of_interest %>%
   qtm(.,fill = "Proportion_of_2010_GII_Reduced_By_2019",fill_scale =tm_scale_intervals(midpoint = NA),mode = continuous_scale)
 ```
+
+### Sources:
+
+HDI Data:
+https://hdr.undp.org/data-center/documentation-and-downloads
+
+Spatial Data:
+https://hub.arcgis.com/datasets/2b93b06dc0dc4e809d3c8db5cb96ba69_0/explore?location=-2.688200%2C0.000000%2C1.41
