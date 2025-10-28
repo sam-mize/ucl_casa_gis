@@ -1,0 +1,58 @@
+---
+title: "Homework Week 4"
+author: "Sam Mize"
+output: html_document
+---
+Let's imports some modules.
+```{r imports, message=FALSE}
+library(raster)
+library(terra)
+library(magrittr)
+library(fs)
+library(tidyverse)
+library(sf)
+library(tmap)
+```
+
+Here the geographic data is read in.
+```{r, message=FALSE}
+world_outlines <- st_read("data/World_Countries_(Generalized)_9029012925078512962.geojson")
+```
+
+And here the Human Development Index (HDI) data 
+```{r, message=FALSE}
+hdi_data <- read_csv("data/HDR25_Composite_indices_complete_time_series.csv")
+```
+
+And here we can join the two on the country columns
+```{r, message=FALSE}
+joined = left_join(world_outlines,hdi_data,by=join_by(COUNTRY == country))
+```
+
+Here the data is filtered to the Gender Inequality Index (GII) columns
+```{r, message=FALSE}
+list_of_relevance<-names(joined) %>%
+  str_detect(.,"gii_")
+data_of_interest <- joined[list_of_relevance]
+```
+
+Here a new column is added, which holds the difference between the GII in 2019 and in 2010 for each nation, and that new column is plotted.
+```{r, message=FALSE}
+data_of_interest <- data_of_interest %>%
+  mutate(.,Change_in_Gender_Inequality_Index_Between_2010_and_2019 = joined[['gii_2019']] - joined[['gii_2010']])
+
+data_of_interest %>%
+  qtm(.,fill = "Change_in_Gender_Inequality_Index_Between_2010_and_2019",fill_scale =tm_scale_intervals(midpoint = NA),mode = continuous_scale)
+```
+
+Lots of countries look about the same here, except for Saudi Arabia
+
+Maybe it would be more interesting to look at decline in gender inequality relative to it's initial level at the start of the 2010 to 2019 interval.
+```{r, message=FALSE}
+data_of_interest <- data_of_interest %>%
+  mutate(.,Proportion_of_2010_GII_Reduced_By_2019 = 1- (joined[['gii_2019']] / joined[['gii_2010']]))
+
+#tmap_mode("plot")
+data_of_interest %>%
+  qtm(.,fill = "Proportion_of_2010_GII_Reduced_By_2019",fill_scale =tm_scale_intervals(midpoint = NA),mode = continuous_scale)
+```
